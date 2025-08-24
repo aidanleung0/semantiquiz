@@ -1,10 +1,12 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class CompareRequest(BaseModel):
+    word: str
     ground_truth: str
     user_input: str
 
 class CompareResponse(BaseModel):
-    ground_truth: str
-    user_input: str
-    similarity: float
+    word: str
+    similarity: str
+    explanation: Optional[str] = None
