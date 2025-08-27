@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-from app.message_queue.producers.message_producer import MessageProducer
+from message_queue.producers.message_producer import MessageProducer
 from fastapi import FastAPI
 from routes.http_routes import evaluation
 from routes.websocket_routes import job_websocket
