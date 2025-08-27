@@ -31,7 +31,7 @@ def run_consumer(loop):
     global main_event_loop
     main_event_loop = loop
     
-    connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
     llm_response_consumer = LLMResponseConsumer(
         connection=connection,
         queue_name='LLM-response-queue',

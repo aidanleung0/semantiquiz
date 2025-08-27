@@ -19,7 +19,7 @@ client = openai.OpenAI(
     base_url="https://api.deepseek.com"
 )
 
-connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
 result_producer = MessageProducer(connection=connection)
 
 def process_llm_batch(job_bodies: list):
