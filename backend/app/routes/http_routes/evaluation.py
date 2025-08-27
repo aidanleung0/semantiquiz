@@ -1,11 +1,14 @@
 from fastapi import APIRouter
-from fastapi import WebSocket, WebSocketDisconnect
+from fastapi import WebSocket, WebSocketDisconnect, Depends, Request
 from schemas.compare import CompareRequest, CompareResponse
-from services.evaluator import evaluate_definition
+from services.compare_request import compare_request
+from message_queue.producers.message_producer import MessageProducer
 
 router = APIRouter()
 
-@router.post("/compare-definition", response_model=CompareResponse)
-async def compare_definition(payload: CompareRequest):
-    return evaluate_definition(payload)
+def get_publisher(request: Request) -> MessageProducer:
+    return request.app.state.publisher
 
+@router.post("/compare-definition", response_model=CompareResponse)
+async def compare_definition(payload: CompareRequest, publisher: MessageProducer=Depends(get_publisher)):
+    return compare_request(publisher=publisher, payload=payload)
