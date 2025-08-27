@@ -8,11 +8,10 @@ from message_queue.producers.message_producer import MessageProducer
 from message_queue.consumers.llm_request_consumer import LLMRequestConsumer
 from schemas.websocket_job import WebsocketResponse
 
-load_dotenv()
 llm_api_key = os.getenv("LLM_API_KEY")
 
 if not llm_api_key:
-    raise ValueError("LLM_API_KEY not found in .env file")
+    raise ValueError("LLM_API_KEY not found in the environment")
 
 client = openai.OpenAI(
     api_key=llm_api_key,
