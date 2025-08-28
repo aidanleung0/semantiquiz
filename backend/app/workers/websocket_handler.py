@@ -2,6 +2,7 @@ import pika
 import json
 import threading
 import asyncio
+import os
 from message_queue.consumers.llm_response_consumer import LLMResponseConsumer
 from connection_manager import connection_manager
 
@@ -31,7 +32,8 @@ def run_consumer(loop):
     global main_event_loop
     main_event_loop = loop
     
-    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+    credentials = pika.PlainCredentials(os.getenv("RABBITMQ_USER", "guest"), os.getenv("RABBITMQ_PASS", "guest"))
+    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', credentials=credentials))
     llm_response_consumer = LLMResponseConsumer(
         connection=connection,
         queue_name='LLM-response-queue',

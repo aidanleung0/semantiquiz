@@ -6,6 +6,9 @@ class ConnectionManager:
         self.active_connections: dict[str, WebSocket] = {}
         self.lock = threading.Lock()
 
+    async def test_connect(self, websocket: WebSocket):
+        await websocket.accept()
+
     async def connect(self, key: str, websocket: WebSocket):
         """
         Accepts and stores a new WebSocket connection.

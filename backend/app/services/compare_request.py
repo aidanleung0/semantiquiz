@@ -7,8 +7,8 @@ def compare_request(producer, payload):
     job_id = uuid4()
 
     data_to_send = {
-        "job_id": job_id,
-        **payload
+        "job_id": str(job_id),
+        **payload.model_dump()
     }
 
     producer.publish(queue_name='llm-request-queue', payload=data_to_send)

@@ -7,11 +7,17 @@ services:
     ports:
       - "5672:5672"   # For the application
       - "15672:15672" # For the web management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "check_running"]
       interval: 30s
       timeout: 30s
       retries: 3
+    volumes:
+      - ./definitions.json:/etc/rabbitmq/definitions.json
+      - rabbitmq_data:/var/lib/rabbitmq
 
   api:
     build:
@@ -24,6 +30,8 @@ services:
       - ./app:/app  # Mounts your code for hot-reloading during development
     environment:
       - LLM_API_KEY=${LLM_API_KEY} # Passes the key from your .env file
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -37,6 +45,11 @@ services:
       - ./app:/app
     environment:
       - LLM_API_KEY=${LLM_API_KEY}
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
     depends_on:
       rabbitmq:
         condition: service_healthy
+
+volumes:
+  rabbitmq_data:
