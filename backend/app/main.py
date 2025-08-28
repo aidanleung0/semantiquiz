@@ -15,8 +15,8 @@ app.include_router(job_websocket.router, prefix="/api/ws")
 async def lifespan(app:FastAPI):
     print("Connecting to RabbitMQ...")
     connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
-    publisher = MessageProducer(connection=connection)
-    app.state.publisher = publisher
+    producer = MessageProducer(connection=connection)
+    app.state.producer = producer
     print("Connection successful, publisher is ready.")
 
     yield
