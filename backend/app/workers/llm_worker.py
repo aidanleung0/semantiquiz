@@ -82,3 +82,24 @@ def process_llm_batch(job_bodies: list):
                 "feedback": "An error occured during the batch LLM call"
             }
             result_producer.publish(queue_name='LLM-response-queue', payload=error_payload)
+
+def process_llm_job_callback(ch, method, properties, body):
+    print("Received new job from llm requests queue")
+    job_body = json.loads(body)
+
+    process_llm_batch([body])
+
+    ch.basic_ack(delivery_tag=method.delivery_tag)
+
+    print("Job finished and acknowledged")
+
+
+if __name__ == "__main__":
+    llm_request_consumer = LLMRequestConsumer(
+        connection=connection,
+        queue_name='LLM-request-queue',
+        llm_process_function=process_llm_job_callback
+    )
+
+    print("Worker is running and waiting for messages...")
+    llm_request_consumer.start_consuming()
