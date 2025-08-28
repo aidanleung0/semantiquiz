@@ -1,7 +1,43 @@
+@font-face {
+  font-family: PTRootUI;
+  src: url('/src/assets/fonts/PT-Root-UI/pt-root-ui_regular.woff2') format('woff2'),
+       url('/src/assets/fonts/PT-Root-UI/pt-root-ui_regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: PTRootUI;
+  src: url('/src/assets/fonts/PT-Root-UI/pt-root-ui_bold.woff2') format('woff2'),
+       url('/src/assets/fonts/PT-Root-UI/pt-root-ui_bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: PTRootUI;
+  src: url('/src/assets/fonts/PT-Root-UI/pt-root-ui_light.woff2') format('woff2'),
+       url('/src/assets/fonts/PT-Root-UI/pt-root-ui_light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: PTRootUI;
+  src: url('/src/assets/fonts/PT-Root-UI/pt-root-ui_medium.woff2') format('woff2'),
+       url('/src/assets/fonts/PT-Root-UI/pt-root-ui_medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
 @import "tailwindcss";
 
-body {
-  background-color: theme('colors.gray.50');
-  color: theme('colors.gray.900');
-  font-family: theme('fontFamily.sans');
+@theme {
+  --color-matcha: #82c295;
+  --font-ptrootui: PTRootUI, "sans-serif"
 }
+
+body {
+  background-color: #ffffe6;
+}
+
