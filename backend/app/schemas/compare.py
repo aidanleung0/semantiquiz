@@ -7,6 +7,4 @@ class CompareRequest(BaseModel):
     user_input: str
 
 class CompareResponse(BaseModel):
-    word: str
-    similarity: str
-    explanation: Optional[str] = None
+    job_id: str
