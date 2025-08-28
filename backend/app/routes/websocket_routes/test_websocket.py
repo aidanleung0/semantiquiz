@@ -4,10 +4,10 @@ from connection_manager import connection_manager
 
 router = APIRouter()
 
-@router.websocket("/{job_id}")
-async def LLM_request_websocket(websocket: WebSocket, job_id: str):
+@router.websocket("/test")
+async def test_websocket(websocket: WebSocket):
     # Accept connection from client
-    await connection_manager.connect(job_id, websocket)
+    await connection_manager.test_connect(websocket)
 
     try:
         while True:
@@ -15,7 +15,7 @@ async def LLM_request_websocket(websocket: WebSocket, job_id: str):
             await websocket.receive_text()
 
     except WebSocketDisconnect:
-        print(f"Client disconnected from job {job_id}")
+        print("WebSocket test successful")
             
     finally:
         connection_manager.disconnect(job_id)

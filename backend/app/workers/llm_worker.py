@@ -1,4 +1,5 @@
-from logging import error
+from _typeshed import ExcInfo
+from logging import error, exception
 import os
 import json
 import pika
@@ -8,21 +9,9 @@ from message_queue.producers.message_producer import MessageProducer
 from message_queue.consumers.llm_request_consumer import LLMRequestConsumer
 from schemas.websocket_job import WebsocketResponse
 
-llm_api_key = os.getenv("LLM_API_KEY")
 
-if not llm_api_key:
-    raise ValueError("LLM_API_KEY not found in the environment")
-
-client = openai.OpenAI(
-    api_key=llm_api_key,
-    base_url="https://api.deepseek.com"
-)
-
-connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
-result_producer = MessageProducer(connection=connection)
-
-def process_llm_batch(job_bodies: list):
-    with open("prompts/llm_system_prompt.txt", "w") as f:
+def process_llm_batch(job_bodies: list, llm_client, result_producer):
+    with open("prompts/llm_system_prompt.txt", "r") as f:
         system_prompt = f.read()
         prompt_items = []
 
@@ -40,11 +29,11 @@ def process_llm_batch(job_bodies: list):
 
     try:
         messages = [
-            {"role": "system", "conent": system_prompt},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ]
 
-        response = client.chat.completions.create(
+        response = llm_client.chat.completions.create(
             model="deepseek-chat",
             messages=messages,
             response_format={
@@ -56,7 +45,7 @@ def process_llm_batch(job_bodies: list):
 
         print(batch_results)
 
-        job_map = {job['job_id'] for job in job_bodies}
+        job_map = {job['job_id']: job for job in job_bodies}
 
         for result in batch_results:
             job = job_map.get(result.get("job_id"))
@@ -83,11 +72,11 @@ def process_llm_batch(job_bodies: list):
             }
             result_producer.publish(queue_name='LLM-response-queue', payload=error_payload)
 
-def process_llm_job_callback(ch, method, properties, body):
+def process_llm_job_callback(ch, method, properties, body, llm_client, result_producer):
     print("Received new job from llm requests queue")
     job_body = json.loads(body)
 
-    process_llm_batch([body])
+    process_llm_batch([job_body], llm_client=llm_client, result_producer=result_producer)
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
@@ -95,11 +84,34 @@ def process_llm_job_callback(ch, method, properties, body):
 
 
 if __name__ == "__main__":
-    llm_request_consumer = LLMRequestConsumer(
-        connection=connection,
-        queue_name='LLM-request-queue',
-        llm_process_function=process_llm_job_callback
-    )
+    print("Worker startup...")
 
-    print("Worker is running and waiting for messages...")
-    llm_request_consumer.start_consuming()
+    try:
+        llm_api_key = os.getenv("LLM_API_KEY")
+
+        if not llm_api_key:
+            raise ValueError("LLM_API_KEY not found in the environment")
+
+        client = openai.OpenAI(
+            api_key=llm_api_key,
+            base_url="https://api.deepseek.com"
+        )
+
+        credentials = pika.PlainCredentials(os.getenv("RABBITMQ_USER", "guest"), os.getenv("RABBITMQ_PASS", "guest"))
+        producer_connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', credentials=credentials))
+        result_producer = MessageProducer(connection=producer_connection)
+
+        on_message_callback = lambda ch, method, properties, body: process_llm_job_callback(ch, method, properties, body, llm_client=client, result_producer=result_producer)
+
+        consumer_connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', credentials=credentials))
+        llm_request_consumer = LLMRequestConsumer(
+            connection=consumer_connection,
+            queue_name='LLM-request-queue',
+            llm_process_function=on_message_callback
+        )
+
+        print("Worker is running and waiting for messages...")
+        llm_request_consumer.start_consuming()
+
+    except Exception as e:
+        print(f"An error occurred in the worker: {e}")
