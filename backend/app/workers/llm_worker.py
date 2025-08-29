@@ -2,6 +2,7 @@ import os
 import json
 import re
 import pika
+import threading
 from pika.spec import PRECONDITION_FAILED
 import openai
 from message_queue.producers.message_producer import MessageProducer
@@ -115,7 +116,10 @@ if __name__ == "__main__":
         )
 
         print("Worker is running and waiting for messages...", flush=True)
-        llm_request_consumer.start_consuming()
+
+        consumer_thread = threading.Thread(target=llm_request_consumer.start_consuming, daemon=True)
+        consumer_thread.start()
+        consumer_thread.join()
 
     except Exception as e:
         print(f"An error occurred in the worker: {e}")
