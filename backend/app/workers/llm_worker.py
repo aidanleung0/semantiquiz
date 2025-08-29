@@ -42,29 +42,20 @@ def process_llm_batch(job_bodies: list, llm_client, result_producer):
         response = llm_client.chat.completions.create(
             model="deepseek-chat",
             messages=messages,
-            response_format={
-                'type': 'json_object'
-            },
             temperature=0.1
         )
 
         response_content = response.choices[0].message.content
-
-
-        print(f"LLM response:\n{response_content}", flush=True)
-        parsed_response = json.loads(response_content)
-        batch_results = parsed_response.get('response')
-
-
-
         job_map = {job['job_id']: job for job in job_bodies}
 
+        batch_results = json.loads(response_content)
+
         for result in batch_results:
-            job = job_map.get(result.get("job_id"))
+            job = job_map.get(result.get("id"))
             if job:
                 result_payload = {
                     "status": "success",
-                    "job_id": result.get("job_id"),
+                    "job_id": result.get("id"),
                     "word": result.get("word"),
                     "user_input": job.get("user_input"),
                     "ground_truth": job.get("ground_truth"),
