@@ -36,7 +36,7 @@ def run_consumer(loop):
     connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', credentials=credentials))
     llm_response_consumer = LLMResponseConsumer(
         connection=connection,
-        queue_name='LLM-response-queue',
+        queue_name='llm-response-queue',
         callback_function=forward_result_to_websocket
     )
 

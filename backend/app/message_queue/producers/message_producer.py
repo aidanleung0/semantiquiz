@@ -26,6 +26,7 @@ class MessageProducer:
             )
 
             logging.info(f"Published message to queue {queue_name}")
+            print(f"Published message to queue {queue_name}")
         except Exception as e:
             logging.error(f"Failed to publish meessage: {e}")
             raise
