@@ -16,6 +16,7 @@ class ConnectionManager:
         await websocket.accept()
         with self.lock:
             self.active_connections[key] = websocket
+            print(f"Websocket connected for job {key}. Total connections: {len(self.active_connections)}", flush=True)
 
     def disconnect(self, key: str):
         with self.lock:
@@ -27,6 +28,9 @@ class ConnectionManager:
             websocket = self.active_connections.get(key)
 
         if websocket:
+            print(f"Sending message to websocket {key}: {message}", flush=True)
             await websocket.send_json(message)
+        else:
+            print(f"No websocket found for job {key}. Available keys: {list(self.active_connections.keys())}", flush=True)
 
 connection_manager = ConnectionManager()

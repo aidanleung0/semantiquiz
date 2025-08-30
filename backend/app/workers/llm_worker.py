@@ -53,6 +53,11 @@ def process_llm_batch(job_bodies: list, llm_client, result_producer):
         for result in batch_results:
             job = job_map.get(result.get("id"))
             if job:
+                print("job found", flush=True)
+                
+                # Add these debug prints
+                print(f"Building payload for job {result.get('id')}", flush=True)
+                
                 result_payload = {
                     "status": "success",
                     "job_id": result.get("id"),
@@ -62,7 +67,16 @@ def process_llm_batch(job_bodies: list, llm_client, result_producer):
                     "feedback": result.get("feedback"),
                     "example": result.get("example"),
                 }
-            result_producer.publish(queue_name='LLM-response-queue', payload=result_payload)
+                
+                print(f"Payload built: {result_payload}", flush=True)
+                print(f"About to publish to llm-response-queue", flush=True)
+                
+                try:
+                    result_producer.publish(queue_name='llm-response-queue', payload=result_payload)
+                    print(f"Published successfully", flush=True)
+                except Exception as e:
+                    print(f"Publish failed: {e}", flush=True)
+                    raise
         
 
     except Exception as e:
