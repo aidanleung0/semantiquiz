@@ -33,11 +33,20 @@
 @import "tailwindcss";
 
 @theme {
-  --color-matcha: #82c295;
+  --color-matcha: #748f3f;
   --font-ptrootui: PTRootUI, "sans-serif"
 }
 
 body {
   background-color: #ffffe6;
+}
+
+@keyframes blink {
+  0%, 50%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 1.75s step-start infinite;
 }
 
