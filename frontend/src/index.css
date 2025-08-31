@@ -34,6 +34,8 @@
 
 @theme {
   --color-matcha: #748f3f;
+  --color-creme-light: #ffffe6;
+  --color-creme-medium: #fffff8;
   --font-ptrootui: PTRootUI, "sans-serif"
 }
 

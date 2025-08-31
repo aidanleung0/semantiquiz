@@ -8,9 +8,9 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 w-full bg-matcha text-white shadow-md z-50">
+      <nav className="fixed inset-x-0 top-0 w-full bg-matcha text-white shadow-md z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-xl font-ptrootui font-bold tracking-wide">
+          <div className="text-2xl font-ptrootui font-bold tracking-wide">
             MatchaQuiz
           </div>
           <div className="space-x-6 flex font-ptrootui">
@@ -22,29 +22,49 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <header className="flex-1 flex flex-col items-center justify-center text-center px-6 py-20">
-        <h1 className="text-4xl md:text-6xl font-ptrootui font-extrabold text-gray-900 leading-tight">
-          Steep your mind<br />in knowledge. 🍵
-        </h1>
-        <p className="mt-6 text-lg font-ptrootui font-light text-gray-700 max-w-2xl">
-          Brew stronger word-to-definition connections with AI-powered flashcards
-          that make learning calm, focused, and effective.
-        </p>
-        <div className="mt-8 flex space-x-4">
-          <button className="px-6 py-3 rounded-2xl bg-matcha text-white font-ptrootui font-medium shadow-lg hover:opacity-90 transition">
-            Get Started
-          </button>
-          <button className="px-6 py-3 rounded-2xl border border-matcha text-matcha font-ptrootui font-medium hover:bg-matcha/10 transition">
-            Learn More
-          </button>
+      <header className="flex-1 flex flex-col items-center justify-center px-10 pt-60 pb-20">
+        {/* Top row: text + image */}
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-center w-full max-w-6xl gap-12">
+          {/* Left column */}
+          <div className="flex-1 text-left mx-auto">
+            <h1 className="text-6xl md:text-7xl font-ptrootui font-extrabold leading-none">
+              Steep your mind in knowledge.
+            </h1>
+            <div className="mt-10 text-left max-w-2xl">
+              <p className="text-xl font-ptrootui font-light text-gray-700">
+                Brew stronger word-to-definition connections with AI-powered flashcards
+                that make learning calm, focused, and effective.
+              </p>
+              <div className="mt-8 flex justify-left space-x-4">
+                <button className="px-6 py-3 rounded-2xl bg-matcha text-white font-ptrootui font-medium shadow-lg hover:opacity-90 transition">
+                  Get Started
+                </button>
+                <button className="px-6 py-3 rounded-2xl border border-matcha text-matcha font-ptrootui font-medium hover:bg-matcha/10 transition">
+                  Learn More
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right column */}
+          <div className="flex-1 flex justify-center md:justify-end hidden md:block">
+            {/* Replace with your whisk animation / image */}
+            <img
+              src="/images/matcha_bowl.png"
+              alt="Matcha Bowl"
+              className="w-full max-w-md mx-auto"
+            />
+          </div>
         </div>
+
+        
       </header>
 
       {/* How It Works */}
-      <section id="about" className="py-20">
+      <section id="about" className="py-20 px-10 bg-creme-medium">
         <div className="max-w-6xl mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold text-gray-900">How It Works</h2>
-          <p className="mt-4 text-gray-600">
+          <p className="mt-4 text-xl font-ptrootui font-light text-gray-700">
             Watch how MatchaQuiz turns a word into a flashcard + AI feedback.
           </p>
           <div className="mt-12">
