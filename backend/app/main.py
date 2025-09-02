@@ -12,9 +12,9 @@ import os
 @asynccontextmanager
 async def lifespan(app:FastAPI):
     print("Connecting to RabbitMQ...")
-    credentials = pika.PlainCredentials(os.getenv("RABBITMQ_USER", "guest"), os.getenv("RABBITMQ_PASS", "guest"))
-    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', credentials=credentials))
-    producer = MessageProducer(connection=connection)
+    # credentials = pika.PlainCredentials(os.getenv("RABBITMQ_USER", "guest"), os.getenv("RABBITMQ_PASS", "guest"))
+    # connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', credentials=credentials))
+    producer = MessageProducer()
     app.state.producer = producer
     print("Connection successful, publisher is ready.")
 
@@ -24,9 +24,10 @@ async def lifespan(app:FastAPI):
 
     yield
 
-    print("Closing RabbitMQ connection...")
-    app.state.producer.close_connection()
-    print("Connection closed")
+    print("Shutdown complete.")
+    # print("Closing RabbitMQ connection...")
+    # app.state.producer.close_connection()
+    # print("Connection closed")
 
 app = FastAPI(lifespan=lifespan)
 

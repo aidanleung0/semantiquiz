@@ -117,8 +117,8 @@ if __name__ == "__main__":
         )
 
         credentials = pika.PlainCredentials(os.getenv("RABBITMQ_USER", "guest"), os.getenv("RABBITMQ_PASS", "guest"))
-        producer_connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', credentials=credentials))
-        result_producer = MessageProducer(connection=producer_connection)
+        # producer_connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq', credentials=credentials))
+        result_producer = MessageProducer()
 
         on_message_callback = lambda job_bodies: process_llm_batch(job_bodies=job_bodies, llm_client=client, result_producer=result_producer)
 
