@@ -16,6 +16,3 @@ async def test_websocket(websocket: WebSocket):
 
     except WebSocketDisconnect:
         print("WebSocket test successful")
-            
-    finally:
-        connection_manager.disconnect(job_id)

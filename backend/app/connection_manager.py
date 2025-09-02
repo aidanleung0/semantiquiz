@@ -5,6 +5,7 @@ class ConnectionManager:
     def __init__(self):
         self.active_connections: dict[str, WebSocket] = {}
         self.lock = threading.Lock()
+        self.pending_messages = {}
 
     async def test_connect(self, websocket: WebSocket):
         await websocket.accept()
@@ -17,6 +18,13 @@ class ConnectionManager:
         with self.lock:
             self.active_connections[key] = websocket
             print(f"Websocket connected for job {key}. Total connections: {len(self.active_connections)}", flush=True)
+        
+        pending = None
+        with self.lock:
+            pending = self.pending_messages.pop(key, None)
+        if pending:
+            for message in pending:
+                await websocket.send_json(message)
 
     def disconnect(self, key: str):
         with self.lock:
@@ -31,6 +39,8 @@ class ConnectionManager:
             print(f"Sending message to websocket {key}: {message}", flush=True)
             await websocket.send_json(message)
         else:
+            with self.lock:
+                self.pending_messages.setdefault(key, []).append(message)
             print(f"No websocket found for job {key}. Available keys: {list(self.active_connections.keys())}", flush=True)
 
 connection_manager = ConnectionManager()
