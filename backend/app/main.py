@@ -1,10 +1,13 @@
 from contextlib import asynccontextmanager
 from message_queue.producers.message_producer import MessageProducer
+
 from fastapi import FastAPI
-from routes.http_routes import evaluation
-from routes.websocket_routes import job_websocket
-from routes.websocket_routes import test_websocket
+from fastapi.middleware.cors import CORSMiddleware
+
 from workers.websocket_handler import start_consumer_thread
+from app.router import api_router
+from app.core.config import settings
+
 import pika
 import os
 
@@ -29,11 +32,16 @@ async def lifespan(app:FastAPI):
     # app.state.producer.close_connection()
     # print("Connection closed")
 
-app = FastAPI(lifespan=lifespan)
+# app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
-app.include_router(evaluation.router, prefix="/api")
-app.include_router(job_websocket.router, prefix="/api/ws")
-app.include_router(test_websocket.router, prefix="/api/ws")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():
